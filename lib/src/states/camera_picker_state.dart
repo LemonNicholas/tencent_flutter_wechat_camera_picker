@@ -229,9 +229,8 @@ class CameraPickerState extends State<CameraPicker>
   }
 
   Future<ResolutionPreset> getResolutionPreset() async {
-    final int totalMemory = SysInfo.getTotalPhysicalMemory();
-    final int freeMemory = SysInfo.getFreePhysicalMemory();
     if(Platform.isAndroid){
+      final int totalMemory = SysInfo.getTotalPhysicalMemory();
       if(totalMemory < 6144000000){
         return ResolutionPreset.medium;
       }else if(totalMemory < 8192000000){
@@ -242,7 +241,7 @@ class CameraPickerState extends State<CameraPicker>
         return ResolutionPreset.ultraHigh;
       }
     }else{
-      return ResolutionPreset.veryHigh;
+      return ResolutionPreset.max;
     }
   }
 

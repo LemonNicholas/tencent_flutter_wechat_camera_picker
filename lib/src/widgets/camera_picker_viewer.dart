@@ -29,7 +29,7 @@ class CameraPickerViewer extends StatefulWidget {
   /// 预览文件的 [XFile] 实例
   final XFile previewXFile;
 
-  /// {@macro wechat_camera_picker.CameraPickerConfig}
+  /// {@macro tencent_wechat_camera_picker.CameraPickerConfig}
   final CameraPickerConfig pickerConfig;
 
   /// Creates a customized [CameraPickerViewerState].

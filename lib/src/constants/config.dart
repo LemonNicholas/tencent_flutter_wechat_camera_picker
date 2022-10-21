@@ -9,7 +9,7 @@ import 'package:flutter/services.dart';
 import '../delegates/camera_picker_text_delegate.dart';
 import 'type_defs.dart';
 
-/// {@template wechat_camera_picker.CameraPickerConfig}
+/// {@template tencent_wechat_camera_picker.CameraPickerConfig}
 /// Configurations for the [CameraPicker].
 /// [CameraPicker] 的配置项
 /// {@endtemplate}
@@ -30,7 +30,7 @@ class CameraPickerConfig {
     this.theme,
     this.textDelegate,
     this.cameraQuarterTurns = 0,
-    this.resolutionPreset = ResolutionPreset.max,
+    this.resolutionPreset,
     this.imageFormatGroup = ImageFormatGroup.unknown,
     this.preferredLensDirection = CameraLensDirection.back,
     this.lockCaptureOrientation,
@@ -83,13 +83,13 @@ class CameraPickerConfig {
   /// 拍摄过程中相机预览是否需要缩放
   final bool enableScaledPreview;
 
-  /// {@template wechat_camera_picker.shouldDeletePreviewFile}
+  /// {@template tencent_wechat_camera_picker.shouldDeletePreviewFile}
   /// Whether the preview file will be delete when pop.
   /// 返回页面时是否删除预览文件
   /// {@endtemplate}
   final bool shouldDeletePreviewFile;
 
-  /// {@template wechat_camera_picker.shouldAutoPreviewVideo}
+  /// {@template tencent_wechat_camera_picker.shouldAutoPreviewVideo}
   /// Whether the video should be played instantly in the preview.
   /// 在预览时是否直接播放视频
   /// {@endtemplate}
@@ -116,7 +116,7 @@ class CameraPickerConfig {
 
   /// Present resolution for the camera.
   /// 相机的分辨率预设
-  final ResolutionPreset resolutionPreset;
+  final ResolutionPreset? resolutionPreset;
 
   /// The [ImageFormatGroup] describes the output of the raw image format.
   /// 输出图像的格式描述
@@ -127,10 +127,10 @@ class CameraPickerConfig {
   /// 首次使用相机时首选的镜头方向，通常是前置或后置。
   final CameraLensDirection preferredLensDirection;
 
-  /// {@macro wechat_camera_picker.ForegroundBuilder}
+  /// {@macro tencent_wechat_camera_picker.ForegroundBuilder}
   final ForegroundBuilder? foregroundBuilder;
 
-  /// {@macro wechat_camera_picker.PreviewTransformBuilder}
+  /// {@macro tencent_wechat_camera_picker.PreviewTransformBuilder}
   final PreviewTransformBuilder? previewTransformBuilder;
 
   /// Whether the camera should be locked to the specific orientation
@@ -138,12 +138,12 @@ class CameraPickerConfig {
   /// 摄像机在拍摄时锁定的旋转角度
   final DeviceOrientation? lockCaptureOrientation;
 
-  /// {@macro wechat_camera_picker.EntitySaveCallback}
+  /// {@macro tencent_wechat_camera_picker.EntitySaveCallback}
   final EntitySaveCallback? onEntitySaving;
 
-  /// {@macro wechat_camera_picker.CameraErrorHandler}
+  /// {@macro tencent_wechat_camera_picker.CameraErrorHandler}
   final CameraErrorHandler? onError;
 
-  /// {@macro wechat_camera_picker.XFileCapturedCallback}
+  /// {@macro tencent_wechat_camera_picker.XFileCapturedCallback}
   final XFileCapturedCallback? onXFileCaptured;
 }

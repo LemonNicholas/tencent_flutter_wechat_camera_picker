@@ -28,7 +28,7 @@ class CameraPicker extends StatefulWidget {
     this.locale,
   }) : super(key: key);
 
-  /// {@macro wechat_camera_picker.CameraPickerConfig}
+  /// {@macro tencent_wechat_camera_picker.CameraPickerConfig}
   final CameraPickerConfig pickerConfig;
 
   /// Creates a customized [CameraPickerState].

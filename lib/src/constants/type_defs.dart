@@ -10,7 +10,7 @@ import 'package:flutter/widgets.dart' show BuildContext, Widget;
 
 import 'enums.dart';
 
-/// {@template wechat_camera_picker.EntitySaveCallback}
+/// {@template tencent_wechat_camera_picker.EntitySaveCallback}
 /// The callback type define for saving entity in the viewer.
 /// 在查看器中保存图片时的回调
 ///
@@ -54,7 +54,7 @@ typedef EntitySaveCallback = FutureOr<dynamic> Function(
   File file,
 );
 
-/// {@template wechat_camera_picker.CameraErrorHandler}
+/// {@template tencent_wechat_camera_picker.CameraErrorHandler}
 /// The error handler when any error occurred during the picking process.
 /// 拍摄照片过程中的自定义错误处理
 /// {@endtemplate}
@@ -63,7 +63,7 @@ typedef CameraErrorHandler = void Function(
   StackTrace? stackTrace,
 );
 
-/// {@template wechat_camera_picker.ForegroundBuilder}
+/// {@template tencent_wechat_camera_picker.ForegroundBuilder}
 /// Build the foreground/overlay widget with the given [CameraValue].
 /// 根据给定的 [CameraValue] 构建自定义的前景 widget
 ///
@@ -75,7 +75,7 @@ typedef ForegroundBuilder = Widget Function(
   CameraController? controller,
 );
 
-/// {@template wechat_camera_picker.PreviewTransformBuilder}
+/// {@template tencent_wechat_camera_picker.PreviewTransformBuilder}
 /// Build the transformed widget with the given [CameraController].
 /// 根据给定的 [CameraController] 构建自定义的变换 widget
 /// {@endtemplate}
@@ -85,7 +85,7 @@ typedef PreviewTransformBuilder = Widget? Function(
   Widget child,
 );
 
-/// {@template wechat_camera_picker.XFileCapturedCallback}
+/// {@template tencent_wechat_camera_picker.XFileCapturedCallback}
 /// The callback type definition when the XFile is captured by the camera.
 /// 拍摄文件生成后的回调
 ///

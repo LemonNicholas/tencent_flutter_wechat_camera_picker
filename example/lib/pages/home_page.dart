@@ -5,7 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
-import 'package:wechat_camera_picker/wechat_camera_picker.dart';
+import 'package:tencent_wechat_camera_picker/tencent_wechat_camera_picker.dart';
 
 import '../main.dart';
 import '../models/picker_method.dart';

@@ -3,7 +3,7 @@
 // in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:wechat_camera_picker/wechat_camera_picker.dart';
+import 'package:tencent_wechat_camera_picker/tencent_wechat_camera_picker.dart';
 
 class AssetWidgetBuilder extends StatelessWidget {
   const AssetWidgetBuilder({

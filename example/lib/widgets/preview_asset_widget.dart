@@ -6,7 +6,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
-import 'package:wechat_camera_picker/wechat_camera_picker.dart';
+import 'package:tencent_wechat_camera_picker/tencent_wechat_camera_picker.dart';
 
 class PreviewAssetWidget extends StatefulWidget {
   const PreviewAssetWidget(this.asset, {Key? key}) : super(key: key);

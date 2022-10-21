@@ -145,8 +145,12 @@ class CameraPickerViewerState extends State<CameraPickerViewer> {
     }
     AssetEntity? entity;
     try {
-      final PermissionState ps = await PhotoManager.requestPermissionExtend();
-      if (ps == PermissionState.authorized || ps == PermissionState.limited) {
+      bool isAuthorized = true;
+      if(Platform.isIOS){
+        final PermissionState ps = await PhotoManager.requestPermissionExtend();
+        isAuthorized = ps == PermissionState.authorized || ps == PermissionState.limited;
+      }
+      if (isAuthorized) {
         switch (viewType) {
           case CameraPickerViewType.image:
             final String filePath = previewFile.path;

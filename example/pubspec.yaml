@@ -13,7 +13,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
-  wechat_camera_picker:
+  tencent_wechat_camera_picker:
     path: ../
 
   package_info_plus: ^1.4.2

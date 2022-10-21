@@ -4,4 +4,4 @@ that can be found in the LICENSE file. -->
 
 # WeChat Camera Picker example
 
-This is the example for the `wechat_camera_picker` package.
+This is the example for the `tencent_wechat_camera_picker` package.

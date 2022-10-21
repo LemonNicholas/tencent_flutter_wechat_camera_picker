@@ -13,6 +13,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
+import 'package:system_info2/system_info2.dart';
 
 import '../constants/config.dart';
 import '../constants/constants.dart';
@@ -227,6 +228,24 @@ class CameraPickerState extends State<CameraPicker>
     return scale;
   }
 
+  Future<ResolutionPreset> getResolutionPreset() async {
+    final int totalMemory = SysInfo.getTotalPhysicalMemory();
+    final int freeMemory = SysInfo.getFreePhysicalMemory();
+    if(Platform.isAndroid){
+      if(totalMemory < 6144000000){
+        return ResolutionPreset.medium;
+      }else if(totalMemory < 8192000000){
+        return ResolutionPreset.high;
+      }else if(totalMemory < 12288000000){
+        return ResolutionPreset.veryHigh;
+      }else{
+        return ResolutionPreset.ultraHigh;
+      }
+    }else{
+      return ResolutionPreset.veryHigh;
+    }
+  }
+
   /// Initialize cameras instances.
   /// 初始化相机实例
   Future<void> initCameras([CameraDescription? cameraDescription]) async {
@@ -283,10 +302,12 @@ class CameraPickerState extends State<CameraPicker>
       } else {
         index = currentCameraIndex;
       }
+      final ResolutionPreset resolutionPreset =
+          pickerConfig.resolutionPreset ?? await getResolutionPreset();
       // Initialize the controller with the given resolution preset.
       final CameraController newController = CameraController(
         cameraDescription ?? cameras[index],
-        pickerConfig.resolutionPreset,
+        resolutionPreset,
         enableAudio: enableAudio,
         imageFormatGroup: pickerConfig.imageFormatGroup,
       );

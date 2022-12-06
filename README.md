@@ -6,9 +6,21 @@ This is a fork package of [wechat_camera_picker](https://pub.dev/packages/wechat
 
 - Fix the issue that it might require for the storage permission twice after captured.
 
-This forked package is maintained by [Tencent Cloud](https://www.tencentcloud.com/products/im).
+This forked package is maintained by [Tencent Cloud Chat](https://www.tencentcloud.com/products/im).
 
 **Thanks a lot to [wechat_camera_picker](https://pub.dev/packages/wechat_camera_picker), while their original README can be seen below.**
+
+# 腾讯微信摄像头拾取器
+
+这是 [wechat_camera_picker](https://pub.dev/packages/wechat_camera_picker) 的一个 fork 包，并添加了以下功能：
+
+- 根据设备性能自动调整 `resolutionPreset`。 旨在解决性能相对较低的手机录制视频可能会崩溃的问题。
+
+- 修复捕获后可能需要两次存储权限的问题。
+
+本fork包由[腾讯云IM](https://cloud.tencent.com/product/im)维护。
+
+**非常感谢[wechat_camera_picker](https://pub.dev/packages/wechat_camera_picker)，他们的原始自述文件可以在下面看到。**
 
 <!-- Copyright 2019 The FlutterCandies author. All rights reserved.
 Use of this source code is governed by an Apache license

@@ -241,7 +241,7 @@ class CameraPickerState extends State<CameraPicker>
         return ResolutionPreset.ultraHigh;
       }
     }else{
-      return ResolutionPreset.max;
+      return ResolutionPreset.veryHigh;
     }
   }
 
@@ -595,13 +595,7 @@ class CameraPickerState extends State<CameraPicker>
     }
     try {
       final XFile file = await controller.takePicture();
-      // Delay disposing the controller to hold the preview.
-      Future<void>.delayed(const Duration(milliseconds: 500), () {
-        innerController?.dispose();
-        safeSetState(() {
-          innerController = null;
-        });
-      });
+      await controller.pausePreview();
       final bool? isCapturedFileHandled = pickerConfig.onXFileCaptured?.call(
         file,
         CameraPickerViewType.image,
@@ -617,11 +611,12 @@ class CameraPickerState extends State<CameraPicker>
         Navigator.of(context).pop(entity);
         return;
       }
-      initCameras(currentCamera);
-      safeSetState(() {});
+      await controller.resumePreview();
     } catch (e) {
       realDebugPrint('Error when preview the captured file: $e');
       handleErrorWithHandler(e, pickerConfig.onError);
+    } finally {
+      safeSetState(() {});
     }
   }
 
@@ -708,8 +703,12 @@ class CameraPickerState extends State<CameraPicker>
       handleError();
       return;
     }
+    safeSetState(() {
+      isShootingButtonAnimate = false;
+    });
     try {
       final XFile file = await controller.stopVideoRecording();
+      await controller.pausePreview();
       final bool? isCapturedFileHandled = pickerConfig.onXFileCaptured?.call(
         file,
         CameraPickerViewType.video,
@@ -723,6 +722,8 @@ class CameraPickerState extends State<CameraPicker>
       );
       if (entity != null) {
         Navigator.of(context).pop(entity);
+      } else {
+        await controller.resumePreview();
       }
     } catch (e, s) {
       realDebugPrint('Error when stop recording video: $e');
@@ -731,7 +732,6 @@ class CameraPickerState extends State<CameraPicker>
       handleError();
       handleErrorWithHandler(e, pickerConfig.onError, s: s);
     } finally {
-      isShootingButtonAnimate = false;
       safeSetState(() {});
     }
   }
@@ -739,7 +739,10 @@ class CameraPickerState extends State<CameraPicker>
   Future<AssetEntity?> pushToViewer({
     required XFile file,
     required CameraPickerViewType viewType,
-  }) {
+  }) async {
+    if (viewType == CameraPickerViewType.image) {
+      await precacheImage(FileImage(File(file.path)), context);
+    }
     return CameraPickerViewer.pushToViewer(
       context,
       pickerConfig: pickerConfig,
@@ -1008,6 +1011,7 @@ class CameraPickerState extends State<CameraPicker>
                 if ((innerController?.value.isRecordingVideo ?? false) &&
                     isRecordingRestricted)
                   CameraProgressButton(
+                    isAnimating: isShootingButtonAnimate,
                     duration: pickerConfig.maximumRecordingDuration!,
                     outerRadius: outerSize.width,
                     ringsColor: theme.indicatorColor,

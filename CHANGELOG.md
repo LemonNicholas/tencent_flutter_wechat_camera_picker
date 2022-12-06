@@ -4,6 +4,14 @@ that can be found in the LICENSE file. -->
 
 # Changelog
 
+## 3.6.5
+
+### Improvements
+
+- Improve stop-capturing experiences. (#146)
+- Precache captured images for better experiences. (#145)
+- Add the loading indicator when saving. (#140)
+
 ## 3.6.2
 
 ### Improvements

@@ -37,6 +37,10 @@ class CameraPickerTextDelegate {
   /// 确认按钮的字段
   String get confirm => '确认';
 
+  /// Preview string for Full Image button.
+  /// 原图按钮的字段
+  String get fullImage => '原图';
+
   /// Tips above the shooting button before shooting.
   /// 拍摄前确认按钮上方的提示文字
   String get shootingTips => '轻触拍照';
@@ -132,6 +136,9 @@ class EnglishCameraPickerTextDelegate extends CameraPickerTextDelegate {
 
   @override
   String get confirm => 'Confirm';
+
+  @override
+  String get fullImage => 'Full Image';
 
   @override
   String get shootingTips => 'Tap to take photo.';

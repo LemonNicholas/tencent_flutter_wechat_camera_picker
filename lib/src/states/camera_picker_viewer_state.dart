@@ -4,6 +4,7 @@
 
 import 'dart:async';
 import 'dart:io';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
@@ -15,17 +16,16 @@ import '../constants/enums.dart';
 import '../constants/styles.dart';
 import '../constants/type_defs.dart';
 import '../internals/methods.dart';
+import '../model/AssetEntityModel.dart';
 import '../widgets/camera_picker.dart';
 import '../widgets/camera_picker_viewer.dart';
-import 'dart:math' as math;
 
 class CameraPickerViewerState extends State<CameraPickerViewer> {
   /// Whether the player is playing.
   /// 播放器是否在播放
   final ValueNotifier<bool> isPlaying = ValueNotifier<bool>(false);
 
-  late final ThemeData theme =
-      widget.pickerConfig.theme ?? CameraPicker.themeData(wechatThemeColor);
+  late final ThemeData theme = widget.pickerConfig.theme ?? CameraPicker.themeData(wechatThemeColor);
 
   /// Construct an [File] instance through [previewXFile].
   /// 通过 [previewXFile] 构建 [File] 实例。
@@ -33,8 +33,7 @@ class CameraPickerViewerState extends State<CameraPickerViewer> {
 
   /// Controller for the video player.
   /// 视频播放的控制器
-  late final VideoPlayerController videoController =
-      VideoPlayerController.file(previewFile);
+  late final VideoPlayerController videoController = VideoPlayerController.file(previewFile);
 
   /// Whether the controller is playing.
   /// 播放控制器是否在播放
@@ -52,6 +51,8 @@ class CameraPickerViewerState extends State<CameraPickerViewer> {
   bool isSavingEntity = false;
 
   CameraErrorHandler? get onError => widget.pickerConfig.onError;
+
+  bool selectFullImage = false;
 
   @override
   void initState() {
@@ -151,7 +152,7 @@ class CameraPickerViewerState extends State<CameraPickerViewer> {
     AssetEntity? entity;
     try {
       bool isAuthorized = true;
-      if(Platform.isIOS){
+      if (Platform.isIOS) {
         final PermissionState ps = await PhotoManager.requestPermissionExtend();
         isAuthorized = ps == PermissionState.authorized || ps == PermissionState.limited;
       }
@@ -171,8 +172,7 @@ class CameraPickerViewerState extends State<CameraPickerViewer> {
             );
             break;
         }
-        if (widget.pickerConfig.shouldDeletePreviewFile &&
-            previewFile.existsSync()) {
+        if (widget.pickerConfig.shouldDeletePreviewFile && previewFile.existsSync()) {
           previewFile.delete();
         }
         return;
@@ -189,7 +189,7 @@ class CameraPickerViewerState extends State<CameraPickerViewer> {
     } finally {
       isSavingEntity = false;
       if (mounted) {
-        Navigator.of(context).pop(entity);
+        Navigator.of(context).pop(AssetEntityModel(assetEntity: entity,sendFullImage: selectFullImage));
       }
     }
   }
@@ -343,9 +343,57 @@ class CameraPickerViewerState extends State<CameraPickerViewer> {
             ),
             Semantics(
               sortKey: const OrdinalSortKey(2),
-              child: Align(
-                alignment: AlignmentDirectional.centerEnd,
-                child: buildConfirmButton(context),
+              child: Row(
+                children: [
+                  Visibility(
+                    visible: widget.viewType != CameraPickerViewType.video,
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          selectFullImage = !selectFullImage;
+                        });
+                      },
+                      child: Center(
+                          child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Center(
+                            child: Container(
+                              width: 25,
+                              height: 25,
+                              decoration: BoxDecoration(
+                                border: !selectFullImage
+                                    ? Border.all(
+                                        color: theme.textTheme.bodyText1?.color ?? Colors.white,
+                                        // width: 30,
+                                      )
+                                    : null,
+                                color: selectFullImage ? theme.colorScheme.secondary : null,
+                                shape: BoxShape.circle,
+                              ),
+                              child: selectFullImage ? const Icon(Icons.check, size: 15) : const SizedBox.shrink(),
+                            ),
+                          ),
+                          SizedBox(width: 8),
+                          Text(
+                            Constants.textDelegate.fullImage,
+                            style: TextStyle(
+                              color: theme.textTheme.bodyText1?.color,
+                              fontSize: 17,
+                            ),
+                          ),
+                          // Text("Full Image", style: TextStyle(color: Colors.white)),
+                        ],
+                      )),
+                    ),
+                  ),
+                  Spacer(),
+                  buildConfirmButton(context)
+                  // Align(
+                  //   alignment: AlignmentDirectional.centerEnd,
+                  //   child: buildConfirmButton(context),
+                  // ),
+                ],
               ),
             ),
           ],
@@ -390,8 +438,7 @@ class _WechatLoading extends StatefulWidget {
   State<_WechatLoading> createState() => _WechatLoadingState();
 }
 
-class _WechatLoadingState extends State<_WechatLoading>
-    with SingleTickerProviderStateMixin {
+class _WechatLoadingState extends State<_WechatLoading> with SingleTickerProviderStateMixin {
   late final AnimationController _controller = AnimationController(
     duration: const Duration(seconds: 2),
     vsync: this,

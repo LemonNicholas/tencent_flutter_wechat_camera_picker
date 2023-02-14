@@ -25,9 +25,10 @@ class _MyHomePageState extends State<HomePage> {
       ValueNotifier<AssetEntity?>(null);
 
   Future<void> selectAssets(PickMethod model) async {
-    final AssetEntity? result = await model.method(context);
+    final AssetEntityModel? result = await model.method(context);
     if (result != null) {
-      selectedAsset.value = result;
+      selectedAsset.value = result.assetEntity;
+      print('lemon fullImage : ${result.sendFullImage}');
       if (mounted) {
         setState(() {});
       }

@@ -188,7 +188,7 @@ class PickMethod {
   final String description;
 
   /// The core function that defines how to use the picker.
-  final Future<AssetEntity?> Function(BuildContext context) method;
+  final Future<AssetEntityModel?> Function(BuildContext context) method;
 
   final GestureLongPressCallback? onLongPress;
 }

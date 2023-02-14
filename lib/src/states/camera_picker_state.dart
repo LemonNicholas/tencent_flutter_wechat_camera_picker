@@ -15,6 +15,7 @@ import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
 import 'package:system_info2/system_info2.dart';
 
+import '../../tencent_wechat_camera_picker.dart';
 import '../constants/config.dart';
 import '../constants/constants.dart';
 import '../constants/enums.dart';
@@ -603,7 +604,7 @@ class CameraPickerState extends State<CameraPicker>
       if (isCapturedFileHandled ?? false) {
         return;
       }
-      final AssetEntity? entity = await pushToViewer(
+      final AssetEntityModel? entity = await pushToViewer(
         file: file,
         viewType: CameraPickerViewType.image,
       );
@@ -716,7 +717,7 @@ class CameraPickerState extends State<CameraPicker>
       if (isCapturedFileHandled ?? false) {
         return;
       }
-      final AssetEntity? entity = await pushToViewer(
+      final AssetEntityModel? entity = await pushToViewer(
         file: file,
         viewType: CameraPickerViewType.video,
       );
@@ -736,7 +737,7 @@ class CameraPickerState extends State<CameraPicker>
     }
   }
 
-  Future<AssetEntity?> pushToViewer({
+  Future<AssetEntityModel?> pushToViewer({
     required XFile file,
     required CameraPickerViewType viewType,
   }) async {

@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import '../constants/config.dart';
 import '../constants/constants.dart';
 import '../constants/enums.dart';
+import '../model/AssetEntityModel.dart';
 import '../states/camera_picker_viewer_state.dart';
 
 class CameraPickerViewer extends StatefulWidget {
@@ -38,7 +39,7 @@ class CameraPickerViewer extends StatefulWidget {
 
   /// Static method to push with the navigator.
   /// 跳转至选择预览的静态方法
-  static Future<AssetEntity?> pushToViewer(
+  static Future<AssetEntityModel?> pushToViewer(
     BuildContext context, {
     required CameraPickerConfig pickerConfig,
     required CameraPickerViewType viewType,
@@ -49,8 +50,8 @@ class CameraPickerViewer extends StatefulWidget {
     return Navigator.of(
       context,
       rootNavigator: useRootNavigator,
-    ).push<AssetEntity?>(
-      PageRouteBuilder<AssetEntity?>(
+    ).push<AssetEntityModel?>(
+      PageRouteBuilder<AssetEntityModel?>(
         pageBuilder: (_, __, ___) => CameraPickerViewer._(
           viewType: viewType,
           previewXFile: previewXFile,

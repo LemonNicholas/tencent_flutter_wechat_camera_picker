@@ -1,7 +1,8 @@
 name: tencent_wechat_camera_picker
 description: A camera picker based on WeChat's UI which is a separate runnable extension to wechat_assets_picker.
 repository: https://github.com/RoleWong/tencent_flutter_wechat_camera_picker
-version: 3.6.5
+homepage: https://www.tencentcloud.com/products/im?from=pub
+version: 3.6.5+2
 
 environment:
   sdk: ">=2.14.0 <3.0.0"
@@ -10,7 +11,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
   camera: ^0.10.0
   camera_platform_interface: ^2.1.5
   path: ^1.8.0

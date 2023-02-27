@@ -17,3 +17,6 @@ dependencies:
   photo_manager: ^2.4.0
   video_player: ^2.3.2
   system_info2: ^2.0.4
+  image_editor_plus:
+    git:
+      url: https://github.com/LemonNicholas/image_editor_plus

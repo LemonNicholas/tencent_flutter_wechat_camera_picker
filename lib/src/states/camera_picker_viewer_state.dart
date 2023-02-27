@@ -5,10 +5,14 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:math' as math;
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
+import 'package:image_editor_plus/data/image_item.dart';
+import 'package:image_editor_plus/image_editor_plus.dart';
 import 'package:path/path.dart' as path;
+import 'package:path/path.dart' as p;
 import 'package:video_player/video_player.dart';
 
 import '../constants/constants.dart';
@@ -53,6 +57,9 @@ class CameraPickerViewerState extends State<CameraPickerViewer> {
   CameraErrorHandler? get onError => widget.pickerConfig.onError;
 
   bool selectFullImage = false;
+
+  File? editedFile;
+  AssetEntity? editedEntity;
 
   @override
   void initState() {
@@ -159,11 +166,15 @@ class CameraPickerViewerState extends State<CameraPickerViewer> {
       if (isAuthorized) {
         switch (viewType) {
           case CameraPickerViewType.image:
-            final String filePath = previewFile.path;
-            entity = await PhotoManager.editor.saveImageWithPath(
-              filePath,
-              title: path.basename(previewFile.path),
-            );
+            if(editedEntity==null){
+              final String filePath = previewFile.path;
+              entity = await PhotoManager.editor.saveImageWithPath(
+                filePath,
+                title: path.basename(previewFile.path),
+              );
+            }else{
+              entity = editedEntity;
+            }
             break;
           case CameraPickerViewType.video:
             entity = await PhotoManager.editor.saveVideo(
@@ -189,7 +200,7 @@ class CameraPickerViewerState extends State<CameraPickerViewer> {
     } finally {
       isSavingEntity = false;
       if (mounted) {
-        Navigator.of(context).pop(AssetEntityModel(assetEntity: entity,sendFullImage: selectFullImage));
+        Navigator.of(context).pop(AssetEntityModel(assetEntity: entity, sendFullImage: selectFullImage));
       }
     }
   }
@@ -208,6 +219,9 @@ class CameraPickerViewerState extends State<CameraPickerViewer> {
             }
             if (previewFile.existsSync()) {
               previewFile.delete();
+            }
+            if(editedFile!=null && editedFile?.existsSync() == true){
+              editedFile?.delete();
             }
             Navigator.of(context).pop();
           },
@@ -256,7 +270,7 @@ class CameraPickerViewerState extends State<CameraPickerViewer> {
         ],
       );
     } else {
-      builder = Image.file(previewFile);
+      builder = Image.file(editedFile??previewFile);
     }
     return MergeSemantics(
       child: Semantics(
@@ -345,50 +359,13 @@ class CameraPickerViewerState extends State<CameraPickerViewer> {
               sortKey: const OrdinalSortKey(2),
               child: Row(
                 children: [
-                  Visibility(
-                    visible: widget.viewType != CameraPickerViewType.video,
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          selectFullImage = !selectFullImage;
-                        });
-                      },
-                      child: Center(
-                          child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Center(
-                            child: Container(
-                              width: 25,
-                              height: 25,
-                              decoration: BoxDecoration(
-                                border: !selectFullImage
-                                    ? Border.all(
-                                        color: theme.textTheme.bodyText1?.color ?? Colors.white,
-                                        // width: 30,
-                                      )
-                                    : null,
-                                color: selectFullImage ? theme.colorScheme.secondary : null,
-                                shape: BoxShape.circle,
-                              ),
-                              child: selectFullImage ? const Icon(Icons.check, size: 15) : const SizedBox.shrink(),
-                            ),
-                          ),
-                          SizedBox(width: 8),
-                          Text(
-                            Constants.textDelegate.fullImage,
-                            style: TextStyle(
-                              color: theme.textTheme.bodyText1?.color,
-                              fontSize: 17,
-                            ),
-                          ),
-                          // Text("Full Image", style: TextStyle(color: Colors.white)),
-                        ],
-                      )),
-                    ),
-                  ),
+                  _buildEditBtn(),
+                  Spacer(),
+                  _buildFullImageBtn(),
                   Spacer(),
                   buildConfirmButton(context)
+                  // Expanded(child: _buildFullImageBtn()),
+                  // Expanded(child: buildConfirmButton(context))
                   // Align(
                   //   alignment: AlignmentDirectional.centerEnd,
                   //   child: buildConfirmButton(context),
@@ -398,6 +375,99 @@ class CameraPickerViewerState extends State<CameraPickerViewer> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildEditBtn() {
+    return Visibility(
+        visible: widget.viewType != CameraPickerViewType.video,
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () async {
+            final File? file = editedEntity!=null ? (await editedEntity?.originFile) : previewFile;
+            if(file == null) return;
+            final Uint8List uint8List = await file.readAsBytes();
+            final List<ImageItem> imageItemList = [ImageItem(img: uint8List, key: previewFile.path)];
+            await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (BuildContext context) => ImageEditor(
+                  images: imageItemList,
+                ),
+              ),
+            ).then((value) async {
+              if (value is List<ImageItem> && value.isNotEmpty == true) {
+                final ImageItem data = value[0];
+                final fileName = DateTime.now().millisecondsSinceEpoch.toString();
+                final extension = p.extension(file.path);
+                final AssetEntity? entity = await PhotoManager.editor.saveImage(
+                  data.image,
+                  title: '$fileName$extension', // Affects EXIF reading.
+                );
+                if (entity == null) return;
+                if (editedFile!=null && editedFile?.existsSync() == true) {
+                  editedFile?.delete();
+                }
+                editedFile = await entity.originFile;
+                editedEntity = entity;
+                setState(() {
+
+                });
+              }
+            });
+          },
+          child: Text(
+            Constants.textDelegate.edit,
+            style: TextStyle(
+              color: theme.textTheme.bodyText1?.color,
+              fontSize: 17,
+            ),
+          ),
+        ));
+  }
+
+  Widget _buildFullImageBtn() {
+    return Visibility(
+      visible: widget.viewType != CameraPickerViewType.video,
+      child: GestureDetector(
+        onTap: () {
+          setState(() {
+            selectFullImage = !selectFullImage;
+          });
+        },
+        child: Center(
+            child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Center(
+              child: Container(
+                width: 25,
+                height: 25,
+                decoration: BoxDecoration(
+                  border: !selectFullImage
+                      ? Border.all(
+                          color: theme.textTheme.bodyText1?.color ?? Colors.white,
+                          // width: 30,
+                        )
+                      : null,
+                  color: selectFullImage ? theme.colorScheme.secondary : null,
+                  shape: BoxShape.circle,
+                ),
+                child: selectFullImage ? const Icon(Icons.check, size: 15) : const SizedBox.shrink(),
+              ),
+            ),
+            SizedBox(width: 8),
+            Text(
+              Constants.textDelegate.fullImage,
+              style: TextStyle(
+                color: theme.textTheme.bodyText1?.color,
+                fontSize: 17,
+              ),
+            ),
+            // Text("Full Image", style: TextStyle(color: Colors.white)),
+          ],
+        )),
       ),
     );
   }

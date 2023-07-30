@@ -667,6 +667,7 @@ class CameraPickerState extends State<CameraPicker>
   void recordDetectionCancel(PointerUpEvent event) {
     if(!isCameraAvailable) return;
     recordDetectTimer?.cancel();
+    recordCountdownTimer?.cancel();
     if (isShootingButtonAnimate) {
       safeSetState(() {
         isShootingButtonAnimate = false;
@@ -675,6 +676,7 @@ class CameraPickerState extends State<CameraPicker>
     if (innerController!.value.isRecordingVideo) {
       lastShootingButtonPressedPosition = null;
       safeSetState(() {});
+      realDebugPrint('lemon stopRecordingVideo = 1');
       stopRecordingVideo();
     }
   }
@@ -691,6 +693,7 @@ class CameraPickerState extends State<CameraPicker>
       if (isRecordingRestricted) {
         recordCountdownTimer =
             Timer(pickerConfig.maximumRecordingDuration!, () {
+              realDebugPrint('lemon stopRecordingVideo = 2');
           stopRecordingVideo();
         });
       }
@@ -729,20 +732,26 @@ class CameraPickerState extends State<CameraPicker>
       handleError();
       return;
     }
+    recordCountdownTimer?.cancel();
     safeSetState(() {
       isShootingButtonAnimate = false;
     });
     try {
+      realDebugPrint('lemon stop recoding = 1');
       await innerController!.pausePreview();
+      realDebugPrint('lemon stop recoding = 2');
       final XFile file = await innerController!.stopVideoRecording();
       // await innerController!.pausePreview();
+      realDebugPrint('lemon stop recoding = 3');
       final bool? isCapturedFileHandled = pickerConfig.onXFileCaptured?.call(
         file,
         CameraPickerViewType.video,
       );
+      realDebugPrint('lemon stop recoding = 4');
       if (isCapturedFileHandled ?? false) {
         return;
       }
+      realDebugPrint('lemon stop recoding = 5');
       final AssetEntityModel? entity = await pushToViewer(
         file: file,
         viewType: CameraPickerViewType.video,
@@ -802,6 +811,7 @@ class CameraPickerState extends State<CameraPicker>
     if(!isCameraAvailable) return null;
     if (enableTapRecording) {
       if (innerController?.value.isRecordingVideo ?? false) {
+        realDebugPrint('lemon stopRecordingVideo = 3');
         return stopRecordingVideo;
       }
       return () {

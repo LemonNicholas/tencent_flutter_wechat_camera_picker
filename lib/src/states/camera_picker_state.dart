@@ -178,7 +178,6 @@ class CameraPickerState extends State<CameraPicker>
 
   @override
   void dispose() {
-    debugPrint("lemon dispose 1");
     if (!Platform.isAndroid) {
       SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
     }
@@ -202,7 +201,6 @@ class CameraPickerState extends State<CameraPicker>
       return;
     }
     if (state == AppLifecycleState.inactive) {
-      debugPrint("lemon dispose 2");
       c.dispose();
     } else if (state == AppLifecycleState.resumed) {
       initCameras(currentCamera);
@@ -262,11 +260,8 @@ class CameraPickerState extends State<CameraPicker>
     // Dispose at last to avoid disposed usage with assertions.
     if (c != null) {
       innerController = null;
-      debugPrint("lemon dispose 4");
       await c.dispose();
-      debugPrint("lemon dispose 5");
     }
-    debugPrint("lemon dispose 6");
     // Then request a new frame to unbind the controller from elements.
     safeSetState(() {
       maxAvailableZoom = 1;
@@ -368,11 +363,11 @@ class CameraPickerState extends State<CameraPicker>
         realDebugPrint("${stopwatch.elapsed} for config's update.");
         innerController = newController;
       } catch (e, s) {
-        debugPrint("lemon initCameras error :$e");
+        realDebugPrint('lemon initCameras error :$e');
         handleErrorWithHandler(e, pickerConfig.onError, s: s);
         if(retry > 0){
-          await Future.delayed(Duration(milliseconds: 500),() async {
-            debugPrint("lemon initCameras retry");
+          await Future.delayed(const Duration(milliseconds: 500),() async {
+            realDebugPrint('lemon initCameras retry');
             await initCameras(cameraDescription, retry - 1);
           });
         }
@@ -738,21 +733,16 @@ class CameraPickerState extends State<CameraPicker>
       isShootingButtonAnimate = false;
     });
     try {
-      debugPrint("lemon stop recoding = 1");
       await innerController!.pausePreview();
-      debugPrint("lemon stop recoding = 2");
       final XFile file = await innerController!.stopVideoRecording();
       // await innerController!.pausePreview();
-      debugPrint("lemon stop recoding = 3");
       final bool? isCapturedFileHandled = pickerConfig.onXFileCaptured?.call(
         file,
         CameraPickerViewType.video,
       );
-      debugPrint("lemon stop recoding = 4");
       if (isCapturedFileHandled ?? false) {
         return;
       }
-      debugPrint("lemon stop recoding = 5");
       final AssetEntityModel? entity = await pushToViewer(
         file: file,
         viewType: CameraPickerViewType.video,
@@ -1304,7 +1294,7 @@ class CameraPickerState extends State<CameraPicker>
     preview = Center(child: transformedWidget ?? preview);
     // Scale the preview if the config is enabled.
     if (pickerConfig.enableScaledPreview) {
-      preview = !isCameraAvailable ? SizedBox() : Transform.scale(
+      preview = !isCameraAvailable ? const SizedBox() : Transform.scale(
         scale: effectiveCameraScale(constraints, innerController!),
         child: preview,
       );

@@ -93,9 +93,11 @@ class CameraPicker extends StatefulWidget {
       buttonTheme: ButtonThemeData(buttonColor: themeColor),
       colorScheme: ColorScheme(
         primary: Colors.grey[900]!,
-        primaryVariant: Colors.grey[900],
+        primaryContainer: Colors.grey[900],
+        // primaryVariant: Colors.grey[900],
         secondary: themeColor,
-        secondaryVariant: themeColor,
+        secondaryContainer: themeColor,
+        // secondaryVariant: themeColor,
         background: Colors.grey[900]!,
         surface: Colors.grey[900]!,
         brightness: Brightness.dark,

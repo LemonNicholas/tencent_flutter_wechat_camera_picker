@@ -5,8 +5,9 @@ homepage: https://www.tencentcloud.com/products/im?from=pub
 version: 3.6.5+2
 
 environment:
-  sdk: ">=2.14.0 <3.0.0"
-  flutter: ">=2.5.0"
+  sdk: '>=2.19.2 <3.0.0'
+#  sdk: ">=2.14.0 <3.0.0"
+#  flutter: ">=2.5.0"
 
 dependencies:
   flutter:
@@ -20,3 +21,4 @@ dependencies:
   image_editor_plus:
     git:
       url: https://github.com/LemonNicholas/image_editor_plus
+      ref: support_flutter_3.13.0

@@ -16,7 +16,7 @@ dependencies:
   tencent_wechat_camera_picker:
     path: ../
 
-  package_info_plus: ^1.4.2
+  package_info_plus: ^4.2.0
   video_player: ^2.3.0
 
 flutter:

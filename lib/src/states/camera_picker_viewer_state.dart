@@ -5,12 +5,12 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:math' as math;
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
-import 'package:image_editor_dove/flutter_image_editor.dart';
-// import 'package:image_editor_plus/data/image_item.dart';
-// import 'package:image_editor_plus/image_editor_plus.dart';
+import 'package:image_editor_plus/data/image_item.dart';
+import 'package:image_editor_plus/image_editor_plus.dart';
 import 'package:path/path.dart' as path;
 import 'package:path/path.dart' as p;
 import 'package:video_player/video_player.dart';
@@ -166,13 +166,13 @@ class CameraPickerViewerState extends State<CameraPickerViewer> {
       if (isAuthorized) {
         switch (viewType) {
           case CameraPickerViewType.image:
-            if (editedEntity == null) {
+            if(editedEntity==null){
               final String filePath = previewFile.path;
               entity = await PhotoManager.editor.saveImageWithPath(
                 filePath,
                 title: path.basename(previewFile.path),
               );
-            } else {
+            }else{
               entity = editedEntity;
             }
             break;
@@ -220,7 +220,7 @@ class CameraPickerViewerState extends State<CameraPickerViewer> {
             if (previewFile.existsSync()) {
               previewFile.delete();
             }
-            if (editedFile != null && editedFile?.existsSync() == true) {
+            if(editedFile!=null && editedFile?.existsSync() == true){
               editedFile?.delete();
             }
             Navigator.of(context).pop();
@@ -270,7 +270,7 @@ class CameraPickerViewerState extends State<CameraPickerViewer> {
         ],
       );
     } else {
-      builder = Image.file(editedFile ?? previewFile);
+      builder = Image.file(editedFile??previewFile);
     }
     return MergeSemantics(
       child: Semantics(
@@ -385,67 +385,37 @@ class CameraPickerViewerState extends State<CameraPickerViewer> {
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: () async {
-            final File? file = editedEntity != null ? (await editedEntity?.originFile) : previewFile;
-            if (file == null) {
-              return;
-            }
-            Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) {
-              return ImageEditor(
-                originImage: file,
-                // //this is nullable, you can custom new file's save postion
-                // savePath: customDirectory
-              );
-            })).then((result) async {
-              if (result is EditorImageResult) {
-                final String fileName = DateTime.now().millisecondsSinceEpoch.toString();
-                final String extension = p.extension(file.path);
-                final AssetEntity? entity = await PhotoManager.editor.saveImageWithPath(
-                  result.newFile.path,
+            final File? file = editedEntity!=null ? (await editedEntity?.originFile) : previewFile;
+            if(file == null) return;
+            final Uint8List uint8List = await file.readAsBytes();
+            final List<ImageItem> imageItemList = [ImageItem(img: uint8List, key: previewFile.path)];
+            await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (BuildContext context) => ImageEditor(
+                  images: imageItemList,
+                ),
+              ),
+            ).then((value) async {
+              if (value is List<ImageItem> && value.isNotEmpty == true) {
+                final ImageItem data = value[0];
+                final fileName = DateTime.now().millisecondsSinceEpoch.toString();
+                final extension = p.extension(file.path);
+                final AssetEntity? entity = await PhotoManager.editor.saveImage(
+                  data.image,
                   title: '$fileName$extension', // Affects EXIF reading.
                 );
-                if (entity == null) {
-                  return;
-                }
-                if (editedFile != null && ((editedFile?.existsSync() ?? false) == true)) {
+                if (entity == null) return;
+                if (editedFile!=null && editedFile?.existsSync() == true) {
                   editedFile?.delete();
                 }
                 editedFile = await entity.originFile;
                 editedEntity = entity;
-                setState(() {});
-              }
-            }).catchError((er) {
-              if (er != null) debugPrint(er.toString());
-            });
+                setState(() {
 
-            // final Uint8List uint8List = await file.readAsBytes();
-            // final List<ImageItem> imageItemList = [ImageItem(img: uint8List, key: previewFile.path)];
-            // await Navigator.push(
-            //   context,
-            //   MaterialPageRoute(
-            //     builder: (BuildContext context) => ImageEditor(
-            //       images: imageItemList,
-            //     ),
-            //   ),
-            // ).then((value) async {
-            //   if (value is List<ImageItem> && value.isNotEmpty == true) {
-            //     final ImageItem data = value[0];
-            //     final fileName = DateTime.now().millisecondsSinceEpoch.toString();
-            //     final extension = p.extension(file.path);
-            //     final AssetEntity? entity = await PhotoManager.editor.saveImage(
-            //       data.image,
-            //       title: '$fileName$extension', // Affects EXIF reading.
-            //     );
-            //     if (entity == null) return;
-            //     if (editedFile!=null && editedFile?.existsSync() == true) {
-            //       editedFile?.delete();
-            //     }
-            //     editedFile = await entity.originFile;
-            //     editedEntity = entity;
-            //     setState(() {
-            //
-            //     });
-            //   }
-            // });
+                });
+              }
+            });
           },
           child: Text(
             Constants.textDelegate.edit,

@@ -438,36 +438,36 @@ class CameraPickerViewerState extends State<CameraPickerViewer> {
         },
         child: Center(
             child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Center(
-              child: Container(
-                width: 25,
-                height: 25,
-                decoration: BoxDecoration(
-                  border: !selectFullImage
-                      ? Border.all(
-                          color: theme.textTheme.bodyText1?.color ?? Colors.white,
-                          // width: 30,
-                        )
-                      : null,
-                  color: selectFullImage ? theme.colorScheme.secondary : null,
-                  shape: BoxShape.circle,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Center(
+                  child: Container(
+                    width: 25,
+                    height: 25,
+                    decoration: BoxDecoration(
+                      border: !selectFullImage
+                          ? Border.all(
+                        color: theme.textTheme.bodyText1?.color ?? Colors.white,
+                        // width: 30,
+                      )
+                          : null,
+                      color: selectFullImage ? theme.colorScheme.secondary : null,
+                      shape: BoxShape.circle,
+                    ),
+                    child: selectFullImage ? const Icon(Icons.check, size: 15) : const SizedBox.shrink(),
+                  ),
                 ),
-                child: selectFullImage ? const Icon(Icons.check, size: 15) : const SizedBox.shrink(),
-              ),
-            ),
-            SizedBox(width: 8),
-            Text(
-              Constants.textDelegate.fullImage,
-              style: TextStyle(
-                color: theme.textTheme.bodyText1?.color,
-                fontSize: 17,
-              ),
-            ),
-            // Text("Full Image", style: TextStyle(color: Colors.white)),
-          ],
-        )),
+                SizedBox(width: 8),
+                Text(
+                  Constants.textDelegate.fullImage,
+                  style: TextStyle(
+                    color: theme.textTheme.bodyText1?.color,
+                    fontSize: 17,
+                  ),
+                ),
+                // Text("Full Image", style: TextStyle(color: Colors.white)),
+              ],
+            )),
       ),
     );
   }
